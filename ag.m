@@ -2,79 +2,97 @@
 target=Characters["universal"];
 
 (*
-GenerateRandomState[target_]:= Module[{Target, stack,floor},
+GenerateRandomState[target_]:= Module[{Target, stack,table},
 	Target=target;
 	stack={};
-	floor={};
+	table={};
 	NestWhile[ # &,  Target, Length[Target]<1];
-	{stack,floor}
+	{stack,table}
 	];
 *)
+
 (*
 stack=GenerateRandomState[target][[1]];   
-floor=GenerateRandomState[target][[2]];
+table=GenerateRandomState[target][[2]];
 *)
+
+stack={"l","a","v"};
+table={"i","s","c"};
+
+
+
 passi=0;
 
 			(* *)
-CS:=Module[{},
+CS[]:=Module[{},
 	passi=passi+1;
-	If[length[stack]>0,  stack[[-1]], Return["NIL"]]
+	If[Length[stack]>0,  Return[stack[[-1]]], Return["NIL"]];
 	];
 	
-TB:=Module[{n},
+TB[]:=Module[{n},
+
 	passi=passi+1;
 	If[stack[[1]]!=target[[-1]],  Return["NIL"]];
 	n=1;
-	While[stack[[n]]==target[[Length[target]+1-n]], n++];
-	Return[target[[n]]];
+	While[stack[[n]]==target[[Length[target]+1-n]] (*&& n<Length[stack]*), n++];
+	Return[stack[[n-1]]];
+
+
 	];
 
-NN:=Module[{},
+NN[]:=Module[{},
 	passi=passi+1;
-	If[TB!="NIL",target[[Position[target,TB[]]+1]], Return["NIL"]];
+	If[TB[]!="NIL", Return[target[[	Flatten[Position[target,TB[]]][[1]]   -1	]]	], 
+		Return["NIL"]];
 	];
 	
 		(* Functions*)
-MS[x_]:=Module[{},
+MS[x_]:=Module[{},   (*C'e' il rischio che venga scritto "NIL" sui dati? Secondo me no*)
+
+	x=ReleaseHold[x];
 	passi=passi+1;
-	If[MemberQ[floor,x],
-	Append[stack, x];
-	Delete[floor, Position[floor,x]];
+	If[MemberQ[table,x],
+	stack=Append[stack, x];
+	table=Delete[table, Position[table,x]];
 	Return[x],
 	Return["NIL"]];
 	];
 
+
 MT[x_]:=Module[{},
+	x=ReleaseHold[x];
 	passi=passi+1;
 	If[MemberQ[stack,x],
-		Append[floor, stack[[-1]]];		
-		Delete[stack, -1];
+		table=Append[table, stack[[-1]]];		
+		stack=Delete[stack, Length[stack] ];
 		Return[x],
 		Return["NIL"]
 		];
 	];
 
-DU[exp1_,exp2_]:=Module[{tmp},
-	passi=passi+1;
-	While[ exp2==="TRUE", exp1]; 
-	Return[exp1]; 
+DU[exp1_,exp2_]:=Module[{tmp},	
+	tmp="NIL";
+	While[ ReleaseHold[exp2]==="TRUE",  passi=passi+1;  tmp=ReleaseHold[exp1]]; 
+	Return[tmp]; (*WARNING: QUESTO POTREBBE FARE UN CICLO IN PIU*)
 	];
 
 NOT[exp_]:=Module[{},
+	exp=ReleaseHold[exp];
 	passi=passi+1;
-	If[exp==="NIL", Return["TRUE"], Return["NIL"]]
+	If[exp==="NIL", Return["TRUE"], Return["NIL"]];
 	];
 	
-EQ[exp1_,exp2_]:=Module[{tmp},
+EQ[exp1_,exp2_]:=Module[{},
+	exp1=ReleaseHold[exp1];
+	exp2=ReleaseHold[exp2];
 	passi=passi+1;
-	If[expr1===expr2, Return["TRUE"], Return["NIL"]]
+	If[exp1===exp2, Return["TRUE"], Return["NIL"]];
 	];
 
 sensors={CS[]& , TB[] &, NN[]&};
 functions={MS[#]&, MT[#] &};
 operators1={NOT[#]&};
-operators2={DU[#,#]&, EQ[#,#] &};
+operators2={DU[#,#2]&, EQ[#,#2] &};
 
 (*sensors={CS,TB,NN};
 functions={MS,MT};
@@ -89,19 +107,19 @@ predicates={NOT,EQ};
 
 (*Promemoria:   ricordarsi di creare RandomSensor --- O forse basta aggiungere un case a FunzCas*)
 
-CreateExpression[]:=Module[{i},
-	i=RandomInteger[{1,8}];
+CreateExpression[]:=Module[{i},  (*Forse si puo' mettere Return prima di Which?*)
+	i=Random[Integer,{1,8}];                                (*RandomInteger[{1,8}];*)
 	Which[
 		i<4,	Return[commands[[i]] ],  
 		i<6,	Return[{commands[[i]] , CreateExpression[]} ],			(*Posso evitare i lower bounds per come funziona which*)
-		i<7,	Return[{commands[[i]] , CreateExpression[]} ],			(*Ridondante ma tenuto per chiarezza*)
+		i<7,	Return[{commands[[i]] , CreateExpression[]} ],			(*Ridondante ma tenuto per estensibilita'*)
 		i<8,	Return[{commands[[i]] , CreateExpression[], CreatePredicate[]}  ],
 		i<9,  	Return[{commands[[i]] , CreateExpression[], CreateExpression[]} ]
 	];
 ];
 
 CreatePredicate[]:=Module[{i},
-	i=RandomInteger[{1,2}];
+	i=Random[Integer,{1,2}];
 	Which[
 		i===1, Return[{predicates[[i]] , CreateExpression[]}  ],
 		i===2, Return[{predicates[[i]] , CreateExpression[], CreateExpression[]}  ]
@@ -109,21 +127,22 @@ CreatePredicate[]:=Module[{i},
 
 ];
 
-GenerateRandomProgram:=Module[{},
+GenerateRandomProgram[]:=Module[{},
 	nnodes=1;
-	program={EQ, {CreateExpression[], CreateExpression[]}};
-
+	program={EQ[#1,#2] &, CreateExpression[], CreateExpression[]}
 	];
 
  
 
 
 
-
+es={EQ[#1, #2] & , NN[] & , {MS[#1] & , CS[] & }}  
 
 (*es={eq[#,#2]&,a,{f[#]&,b}}*)
 
 (*es={Plus[#,#2]&,6,{Sqrt[#]&,10}}*)
+
+(*t={DU[#1, #2] & , {MT[#1] & , CS[] & } , {NOT[#] &,   {NOT[#] &, CS[] }*)
 
 
 EvaluateTree[tree_]:=Module[{tmp1, tmp2}, 
@@ -134,16 +153,17 @@ EvaluateTree[tree_]:=Module[{tmp1, tmp2},
 	];*)
 
 	Which[
-		Depth[tree]===1, 	If[passi>3*Length[target]^2 , Return ["NIL"],  Return[tree]], 
-		Length[tree]===2,   Return[ 
-								tree[[1]][ EvaluateTree[tree[[2]]] ]   
-								 ],
-		Length[tree]===3,	Return[  
-								tree[[1]][  EvaluateTree[tree[[2]]], EvaluateTree[tree[[3]]]   ]
-								]
-		];
-
-
+	      Depth[tree]===3, 	If[passi> 10  (*3*Length[target]^2*) , Return ["NIL"], Print[tree];  Return[tree]], 
+	      Length[tree]===2, Print[tree];   Return[ 
+				       tree[[1]][  EvaluateTree[tree[[2]]] ]     ]  (* Qui potrebbe stari bene un ToString*)
+					  ,
+	      Length[tree]===3, Print[tree];	Return[  
+				       tree[[1]][  EvaluateTree[tree[[2]]]  ,
+						   EvaluateTree[tree[[3]]]    ]   
+					 ]
+	      ];
+			    
+			    
 ];
 
 
