@@ -1,0 +1,82 @@
+%\documentclass[mathserif]{beamer} %
+%\usepackage{eulervm}
+%\usetheme{metropolis}
+
+\documentclass{beamer} %
+\usetheme{metropolis}
+\usepackage[absolute,overlay]{textpos}
+\newcommand\FrameText[1]{%
+  \begin{textblock*}{\paperwidth}(12pt,\textheight)
+    \raggedright #1\hspace{.1em}
+  \end{textblock*}}
+\usepackage{color}
+
+
+\usepackage{etex}
+\usepackage{graphicx}
+%\usepackage[language=eng]{babel}
+\usepackage{cite}
+%\usepackage{qcircuit}
+\usepackage{bbold}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+%\usepackage[font=small,labelfont=bf]{caption}
+%\usepackage[font=small,labelfont=bf]{subcaption}
+%\DeclareCaptionFont{tiny}{\tiny}
+%\usepackage{caption, subcaption}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\DeclareMathOperator{\Tr}{Tr}
+\usepackage{braket}
+%\usepackage{physics}
+\newcommand\abs[1]{\left|#1\right|}
+\graphicspath{ {./images/} }
+\usepackage{tikz}
+\usepackage{placeins}
+%\linespread{1.005}\selectfont
+\usepackage{paralist}
+\usepackage{tabto}
+\setlength{\parindent}{0mm}
+\setbeamercovered{transparent}
+%\usefonttheme[onlymath]{serif}
+
+\title{Algoritmi genetici in Mathematica: soluzione del problema di Koza}
+%\subtitle{Using Beamer}
+\author{Claudio Chiappetta}
+\institute{Università degli studi di Milano}
+\date{}%\today
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{block body}{bg=white}
+\setbeamercolor{block title}{bg=white}
+
+
+
+\begin{frame}
+\titlepage 
+\end{frame}
+
+\section{Il problema}
+\begin{frame}
+\frametitle{Il problema}
+
+\begin{itemize}
+\item Parola bersaglio: \emph{"universal"}
+\item Due insiemi di lettere: una pila e un insieme non ordinato
+\item Abbiamo un set di azioni
+\item Trovare una combinazione di azioni che formi la parola bersaglio sulla pila
+\end{itemize}
+\end{frame}
+
+\section{L'approccio}
+\begin{frame}
+\frametitle{Usando gli strumenti di Mathematica}
+\begin{itemize}
+\item Un individuo è un comando di Mathematica
+\item 
+\end{itemize}
+\end{frame}
+
+
+\end{document}
