@@ -3,8 +3,10 @@
 %\usetheme{metropolis}
 
 \documentclass{beamer} %
-\usetheme{metropolis}
-\usepackage[absolute,overlay]{textpos}
+\usetheme{Klope}
+%\usepackage[absolute,overlay]{textpos}
+\usepackage{textpos}
+\usepackage{mdframed}
 \newcommand\FrameText[1]{%
   \begin{textblock*}{\paperwidth}(12pt,\textheight)
     \raggedright #1\hspace{.1em}
@@ -71,12 +73,174 @@
 
 \section{L'approccio}
 \begin{frame}
-\frametitle{Usando gli strumenti di Mathematica}
+\frametitle{L'approccio}
+
+Due metodi: 
 \begin{itemize}
 \item Un individuo è un comando di Mathematica
-\item 
+\item Un individuo è un albero (lista annidata di funzioni)
+\end{itemize}
+
+\begin{block}{Problema: Controllare l'esecuzione degli individui}
+Si è scelto di usare dei nomi "finti" per le funzioni
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Generazione di individui casuali}
+
+\begin{itemize}
+\item Si parte da \texttt{EQ[\#1,\#2] \&}
+\item Una funzione ricorsiva inserisce come argomenti due comandi casuali, e chiama se stessa per riempire gli eventuali argomenti
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Esecuzione di un individuo}
+La struttura ad albero viene trasformata ricorsivamente in un espressione di Mathematica
+\begin{itemize}
+\item Una funzione trasforma un nodo in un comando di Mathematica, e ne determina gli argomenti applicando se stessa ai sottorami.
+\item Top-down, backtracking
 \end{itemize}
 \end{frame}
 
 
+
+\begin{frame}
+Nel comando con nomi inattivi, questi vengono sostituiti con le vere funzioni utilizzando \texttt{ReplaceAll}. 
+
+
+\frametitle{Esecuzione di un individuo}
+A questo punto l'espressione è immediatamente valutabile
+
+
+\begin{block}{Problema: la funzione \texttt{DU}}
+È necessario valutare più di una volta gli argomenti. Si risolve utilizzando opportunamente \texttt{HoldAll} 
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Fitness}
+\begin{itemize}
+\item Funzioni che non premiano l'efficienza
+\begin{itemize}
+\item Funzione standard
+\item Funzione generosa
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item Funzioni che premiano l'efficienza
+\begin{itemize}
+\item Funzione di Koza
+\item Variazione della funzione di Koza
+\end{itemize}
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Crossover}
+\begin{itemize}
+\item Presa una coppia di genitori, si stacca un ramo da ognuno dei due
+\item Si attacca su uno il ramo dell'altro
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Crossover: Individui del secondo tipo}
+\begin{itemize}
+\item Estrarre un punto casuale in una lista di cui non si conosce lunghezza nè profondita
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Crossover: Individui del secondo tipo}
+\begin{block}{Reservoir sampling}
+\begin{itemize}
+\item L'algoritmo prende in ingresso un nodo dell'albero
+\item Lo mette nella riserva con probabilità $1/passi$, dove $passi$ è il numero corrente di passi
+\item Chiama se stesso sui sottorami del nodo corrente
+\item Dopo che ha processato l'ultima foglia ritorna la riserva
+\item Top-down, backtracking
+\item $O(n)$, dove $n$ è il numero di nodi 
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Crossover: Individui del secondo tipo}
+\begin{itemize}
+\item L'inserzione di un ramo un un punto casuale è più complicata dell'estrazione
+\item Cambiare la gestione della riserva
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Crossover: Individui del primo tipo}
+\begin{block}{Estrazione}
+
+\begin{itemize}
+\item \texttt{RandomChoice}, \texttt{Level}
+\item Una riga di codice
+\end{itemize}
+
+\end{block}
+
+\begin{block}{Inserzione}
+
+\begin{itemize}
+\item \texttt{RandomChoice}, \texttt{Level}, \texttt{Position} e \texttt{ReplacePart} 
+\item $3$ righe  di codice
+\end{itemize}
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Riproduzione}
+\begin{itemize}
+\item Crossover su $N_{individui}-2$ elementi
+\item Vengono mantenuti due individui con fitness massima
+\item Mutazione
+\end{itemize}
+\end{frame}
+
+
+\section{Ottimizzazione e risultati}
+\begin{frame}
+\frametitle{Ottimizzazione}
+\begin{itemize}
+\item $p_c \sim 0.7$
+\item $p_m \lesssim 0.01$ (alta)
+\end{itemize}
+
+\begin{block}{Problema}
+Vengono generati individui con loop infiniti. Si usano i metodi utilizzati da Koza per ottenere programmi efficienti
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Risultati}
+\begin{itemize}
+\item Programmi funzionanti con lunghezza arbitraria vengono trovati prima della generazione $30$.
+\item Si ottengono programmi che terminano dopo un numero di passi finito solo utilizzando una variazione della fitness di Koza
+\item In questo caso, si trovano programmi funzionanti fra la generazione $30$ e la $50$; programmi ragionevolmente efficienti compaiono dopo la generazione $60$
+\item Tempo di esecuzione altamente variabile, dell'ordine di $1 \div 10$ ore.
+\end{itemize}
+
+\end{frame}
+
+
+\section{Grazie per l'attenzione}
 \end{document}
