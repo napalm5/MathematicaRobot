@@ -260,7 +260,7 @@ Per prima cosa, è stato necessario determinare il valore dei parametri dell'alg
 
 Questi sono stati determinati empiricamente, eseguendo il programma con diverse combinazioni dei parametri in un intervallo ragionevole (sappiamo che nella maggior parte dei casi, un algoritmo genetico funziona in maniera ottimale quando $p_c  > 0.7$ e $p_m \sim 0.01$).
 
-Il tempo di esecuzione del programma non è ovviamente deterministico, ma è soggetto a fluttuazioni statistiche. Non sono stati eseguite sufficienti esecuzioni da permettere una statistica rigorosa su queste fluttuazioni e di conseguenza una stima precisa delle performance del programma. Considerati i tempi di esecuzione (dell'ordine di $1 \div 10$ ore per ogni esecuzione), una statistica rigorosa  avrebbe richiesto una quantità rilevante di tempo e risorse.
+Il tempo di esecuzione del programma non è ovviamente deterministico, ma è soggetto a fluttuazioni statistiche. Non sono state eseguite sufficienti esecuzioni da permettere una statistica rigorosa su queste fluttuazioni e di conseguenza una stima precisa delle performance del programma. Considerati i tempi di esecuzione (dell'ordine di $1 \div 10$ ore per ogni esecuzione), una statistica rigorosa  avrebbe richiesto una quantità rilevante di tempo e risorse.
 
 Dai dati raccolti, risulta che il programma converge più velocemente per bassi valori di $p_c$ ($p_c \sim 0.7$) e alti valori di $p_m$ ($p_m \sim 0.005$). Questo potrebbe significare che è il caso, più che l'evoluzione, a dettare la comparsa di soluzioni. 
 
@@ -283,13 +283,14 @@ Per ottenere programmi migliori si è adottata la stessa strategia adottata da J
 \item Modificare la funzione \texttt{DU} del robot, in modo che si fermi dopo un numero fissato di iterazioni, scelto arbitrariamente in base alla lunghezza del bersaglio (è stato scelto $n=20$)
 \item Scegliere una funzione di fitness che premiasse gli individui più efficienti (quelli che compiono un numero di passi vicino al minimo). Sono state usate le due funzioni descritte in precedenza.
 \item Usare le stesse configurazioni iniziali usate da Koza, e la stessa dimensione della popolazione.
+\item Lanciare l'algoritmo per un numero fissato di generazioni, invece che fermarlo quando genera il primo programma completo. È stato scelto di usare $200$ generazioni, che sembra essere sufficiente per stabilizzare la fitness (Koza ne usava $100$)
 \end{itemize}
 
 Utilizzando queste accortezze, l'algoritmo converge, portando a soluzioni che terminano in un numero finito di passi, ma solo se si utilizza la versione alternativa della fitness di Koza. Con la funzione di Koza, l'algoritmo produce solo soluzioni con punteggio di efficienza e parsimonia pari a $0$. 
 
 Lanciando l'algoritmo con questa funzione di fitness, prima della generazione $50$ viene trovato un programma corretto, mentre prima della generazione $100$ la fitness degli individui si stabilizza intorno al suo valore massimo. Questo è in linea con i risultati ottenuti da Koza.
 
-In figura \ref{fig::voti_pars} è rappresentato l'andamento del massimo valore della fitness in una singola esecuzione dell'algoritmo, notiamo che con questa configurazione ottimale l'andamento dei voti è simile a quello della configurazione ingenua. Il tempo di esecuzione medio è di circa $5$ ore.
+In figura \ref{fig::voti_pars} è rappresentato l'andamento del massimo valore della fitness in una singola esecuzione dell'algoritmo, notiamo che con questa configurazione ottimale l'andamento dei voti è simile a quello della configurazione ingenua. Il tempo di esecuzione medio è di circa $4$ ore.
 
 Riportiamo uno degli individui generati con fitness massima ($96.63$)
 
@@ -428,6 +429,10 @@ Riportiamo uno degli individui generati con fitness massima ($96.63$)
 \caption{Andamento del massimo voto assegnato in ogni generazione per generazione, in una singola esecuzione dell'algoritmo, utlizzando una variazione della fitness di Koza}
 \end{figure}
 
+
+Cambiando la parola bersaglio diversa, l'algoritmo continua a convergere, se la parola bersaglio non contiene lettere ripetute. Anche Koza nella sua trattazione storica considera solo il caso di parole in cui ogni lettera compare una volta sola.
+ 
+Il tempo e il numero di esecuzioni impiegati dall'algoritmo rimangono nello stesso ordine di grandezza a prescindere dalla lunghezza della parola bersaglio (intorno alle $4$ ore), anche se non sono state fatte abbastanza misurazioni per avere una statistica rigorosa. 
 
 
 
